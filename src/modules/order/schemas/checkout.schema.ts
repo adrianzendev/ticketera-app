@@ -1,5 +1,13 @@
 import { z } from "zod";
 
+import {
+  getEmailError,
+  getFieldErrors,
+  getPersonNameError,
+  normalizeEmail,
+  type FieldErrors,
+} from "@/lib/validation";
+
 export const documentTypeSchema = z.enum(["DNI", "CE", "PASSPORT"]);
 export type DocumentType = z.infer<typeof documentTypeSchema>;
 export const DOCUMENT_TYPE_OPTIONS: ReadonlyArray<{ value: DocumentType; label: string }> = [
@@ -64,10 +72,8 @@ export const EMPTY_CHECKOUT_VALUES: CheckoutFormValues = {
   acceptedTerms: false,
 };
 
-export type CheckoutErrors = Partial<Record<CheckoutField, string>>;
+export type CheckoutErrors = FieldErrors<CheckoutField>;
 
-const FULL_NAME_PATTERN = /^[A-Za-zÁÉÍÓÚáéíóúÑñÜü' -]+$/;
-const FULL_NAME_MAX_LENGTH = 80;
 const PHONE_PATTERN = /^(?:\+?51)?(9\d{8})$/;
 const CARD_EXPIRY_PATTERN = /^(0[1-9]|1[0-2])\/(\d{2})$/;
 
@@ -79,8 +85,6 @@ const DOCUMENT_RULES: Record<DocumentType, { pattern: RegExp; message: string }>
     message: "El pasaporte debe tener entre 6 y 12 letras o números.",
   },
 };
-
-const emailSchema = z.email();
 
 const stripSeparators = (value: string) => value.replace(/[\s-]/g, "");
 
@@ -130,23 +134,8 @@ export function formatCardExpiry(input: string): string {
 type Rule = (values: CheckoutFormValues) => string | null;
 
 const rules: Partial<Record<CheckoutField, Rule>> = {
-  fullName: ({ fullName }) => {
-    const value = fullName.trim();
-    if (!value) return "Ingresa tu nombre completo.";
-    const words = value.split(/\s+/);
-    if (value.length > FULL_NAME_MAX_LENGTH || words.length < 2 || !FULL_NAME_PATTERN.test(value)) {
-      return "Ingresa tu nombre y apellido, solo con letras.";
-    }
-    return null;
-  },
-  email: ({ email }) => {
-    const value = email.trim();
-    if (!value) return "Ingresa tu correo electrónico.";
-    if (!emailSchema.safeParse(value.toLowerCase()).success) {
-      return "Ingresa un correo válido, por ejemplo tu@email.com.";
-    }
-    return null;
-  },
+  fullName: ({ fullName }) => getPersonNameError(fullName),
+  email: ({ email }) => getEmailError(email),
   documentNumber: ({ documentType, documentNumber }) => {
     const value = normalizeDocumentNumber(documentType, documentNumber);
     if (!value) return "Ingresa tu número de documento.";
@@ -193,7 +182,7 @@ function normalize(values: CheckoutFormValues): CheckoutData {
   const isCard = values.paymentMethod === "card";
   return {
     fullName: values.fullName.trim(),
-    email: values.email.trim().toLowerCase(),
+    email: normalizeEmail(values.email),
     documentType: values.documentType,
     documentNumber: normalizeDocumentNumber(values.documentType, values.documentNumber),
     phone: normalizePhone(values.phone),
@@ -231,12 +220,5 @@ export const checkoutSchema: z.ZodType<CheckoutData, CheckoutFormValues> = z
   .transform(normalize);
 
 export function getCheckoutErrors(values: CheckoutFormValues): CheckoutErrors {
-  const result = checkoutSchema.safeParse(values);
-  if (result.success) return {};
-  const errors: CheckoutErrors = {};
-  for (const issue of result.error.issues) {
-    const field = issue.path[0] as CheckoutField | undefined;
-    if (field && !errors[field]) errors[field] = issue.message;
-  }
-  return errors;
+  return getFieldErrors<CheckoutField>(checkoutSchema, values);
 }
