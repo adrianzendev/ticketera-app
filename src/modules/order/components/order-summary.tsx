@@ -3,10 +3,11 @@ import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { formatTicketCount, type CartLine } from "@/modules/order/store/cart.store";
+import type { OrderLine } from "@/modules/order/schemas/order.schema";
+import { formatTicketCount } from "@/modules/order/store/cart.store";
 
 type OrderSummaryProps = {
-  lines: Array<CartLine & { seatLabels: string[] }>;
+  lines: OrderLine[];
   total: number;
   count: number;
   continueHref: string;
@@ -47,6 +48,56 @@ function ContinueCta({
   );
 }
 
+export function OrderLineList({ lines, className }: { lines: OrderLine[]; className?: string }) {
+  return (
+    <ul className={cn("flex flex-col gap-3", className)}>
+      {lines.map((line) => (
+        <li key={line.tierId} className="flex flex-col gap-1 text-[15px]">
+          <span className="flex justify-between gap-3">
+            <span>
+              {line.qty} × {line.name}
+            </span>
+            <span className="font-semibold tabular-nums">S/ {line.amount}</span>
+          </span>
+          {line.seatLabels.length > 0 && (
+            <span className="text-[13px] text-muted-foreground">{line.seatLabels.join("; ")}</span>
+          )}
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+export function OrderTotal({
+  total,
+  count,
+  className,
+}: {
+  total: number;
+  count?: number;
+  className?: string;
+}) {
+  return (
+    <p
+      className={cn(
+        "flex items-baseline justify-between border-t-[1.5px] border-dashed border-zinc-300 pt-[18px]",
+        className,
+      )}
+    >
+      <span className="text-[15px] font-medium">
+        Total
+        {count !== undefined && (
+          <>
+            {" "}
+            <span className="font-normal text-muted-foreground">({formatTicketCount(count)})</span>
+          </>
+        )}
+      </span>
+      <span className="text-[28px] font-bold tracking-tight tabular-nums">S/ {total}</span>
+    </p>
+  );
+}
+
 export function OrderSummary({ lines, total, count, continueHref, className }: OrderSummaryProps) {
   return (
     <aside
@@ -59,36 +110,14 @@ export function OrderSummary({ lines, total, count, continueHref, className }: O
       <h2 className="text-xl font-semibold">Tu compra</h2>
 
       {lines.length > 0 ? (
-        <ul className="flex flex-col gap-3">
-          {lines.map((line) => (
-            <li key={line.tierId} className="flex flex-col gap-1 text-[15px]">
-              <span className="flex justify-between gap-3">
-                <span>
-                  {line.qty} × {line.name}
-                </span>
-                <span className="font-semibold tabular-nums">S/ {line.amount}</span>
-              </span>
-              {line.seatLabels.length > 0 && (
-                <span className="text-[13px] text-muted-foreground">
-                  {line.seatLabels.join("; ")}
-                </span>
-              )}
-            </li>
-          ))}
-        </ul>
+        <OrderLineList lines={lines} />
       ) : (
         <p className="rounded-2xl border-[1.5px] border-dashed border-zinc-300 p-5 text-center text-sm leading-normal text-muted-foreground">
           Todavía no elegiste entradas. Toca una zona o usa los botones +.
         </p>
       )}
 
-      <p className="flex items-baseline justify-between border-t-[1.5px] border-dashed border-zinc-300 pt-[18px]">
-        <span className="text-[15px] font-medium">
-          Total{" "}
-          <span className="font-normal text-muted-foreground">({formatTicketCount(count)})</span>
-        </span>
-        <span className="text-[28px] font-bold tracking-tight tabular-nums">S/ {total}</span>
-      </p>
+      <OrderTotal total={total} count={count} />
 
       <ContinueCta count={count} href={continueHref} className="h-14 rounded-2xl text-base" />
     </aside>
