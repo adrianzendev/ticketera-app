@@ -4,33 +4,13 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { formatEventDateLong, formatEventDateShort } from "@/lib/date";
 import { eventService } from "@/modules/event/services/event.service";
 import { PurchaseStepsHeader } from "@/modules/order/components/purchase-steps-header";
 import { TicketSelection } from "@/modules/order/components/ticket-selection";
 import { venueService } from "@/modules/venue/services/venue.service";
 
 type TicketsPageProps = { params: Promise<{ slug: string }> };
-
-const EVENT_TIME_ZONE = "America/Lima";
-
-const longDateFormatter = new Intl.DateTimeFormat("es-PE", {
-  weekday: "long",
-  day: "numeric",
-  month: "long",
-  timeZone: EVENT_TIME_ZONE,
-});
-
-const shortDateFormatter = new Intl.DateTimeFormat("es-PE", {
-  weekday: "short",
-  day: "numeric",
-  month: "short",
-  timeZone: EVENT_TIME_ZONE,
-});
-
-// es-PE produce "sábado, 14 de noviembre" y "sáb, 14 nov."; el diseño va sin coma ni punto.
-function formatDate(formatter: Intl.DateTimeFormat, iso: string) {
-  return formatter.format(new Date(iso)).replace(/[,.]/g, "");
-}
 
 export function generateStaticParams() {
   return eventService.list().map((event) => ({ slug: event.slug }));
@@ -78,8 +58,8 @@ export default async function TicketsPage({ params }: TicketsPageProps) {
                 {event.title}
               </h1>
               <p className="text-[13px] text-muted-foreground lg:text-[15px]">
-                <span className="lg:hidden">{formatDate(shortDateFormatter, event.startDate)}</span>
-                <span className="hidden lg:inline">{formatDate(longDateFormatter, event.startDate)}</span>
+                <span className="lg:hidden">{formatEventDateShort(event.startDate)}</span>
+                <span className="hidden lg:inline">{formatEventDateLong(event.startDate)}</span>
                 {` · ${place}`}
               </p>
             </div>
