@@ -2,58 +2,19 @@ import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { useState, type ComponentProps, type FormEvent, type ReactNode } from "react";
 import { flushSync } from "react-dom";
 
+import {
+  FORM_CONTROL_CLASS_NAME,
+  FormField,
+  getDescribedBy,
+  type FormFieldProps,
+} from "@/components/form/form-field";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import type { ValidateResult } from "@/hooks/use-validated-form";
 import { cn } from "@/lib/utils";
 import { getAuthErrorMessage } from "@/modules/auth/services/auth.service";
 
-const controlClassName =
-  "h-[52px] rounded-[14px] border-zinc-300 bg-white px-4 text-base md:text-base lg:text-[15px]";
-
-type FieldFrameProps = {
-  id: string;
-  label: ReactNode;
-  error?: string;
-  hint?: string;
-  labelAction?: ReactNode;
-};
-
-function describedBy(id: string, hint?: string, error?: string) {
-  const ids = [hint && `${id}-hint`, error && `${id}-error`].filter(Boolean);
-  return ids.length > 0 ? ids.join(" ") : undefined;
-}
-
-function FieldFrame({
-  id,
-  label,
-  error,
-  hint,
-  labelAction,
-  children,
-}: FieldFrameProps & { children: ReactNode }) {
-  return (
-    <div className="flex min-w-0 flex-col gap-2">
-      <div className="flex items-center justify-between gap-3">
-        <label htmlFor={id} className="text-sm font-medium">
-          {label}
-        </label>
-        {labelAction}
-      </div>
-      {children}
-      {hint && (
-        <p id={`${id}-hint`} className="text-[13px] text-muted-foreground">
-          {hint}
-        </p>
-      )}
-      {error && (
-        <p id={`${id}-error`} className="text-sm text-destructive">
-          {error}
-        </p>
-      )}
-    </div>
-  );
-}
+type FieldFrameProps = Omit<FormFieldProps, "className" | "children">;
 
 export function AuthTextField({
   id,
@@ -64,15 +25,15 @@ export function AuthTextField({
   ...inputProps
 }: Omit<FieldFrameProps, "hint"> & Omit<ComponentProps<"input">, "id">) {
   return (
-    <FieldFrame id={id} label={label} error={error} labelAction={labelAction}>
+    <FormField id={id} label={label} error={error} labelAction={labelAction}>
       <Input
         {...inputProps}
         id={id}
         aria-invalid={error ? true : undefined}
-        aria-describedby={describedBy(id, undefined, error)}
-        className={cn(controlClassName, className)}
+        aria-describedby={getDescribedBy(id, { error })}
+        className={cn(FORM_CONTROL_CLASS_NAME, className)}
       />
-    </FieldFrame>
+    </FormField>
   );
 }
 
@@ -89,15 +50,15 @@ export function AuthPasswordField({
   const Icon = visible ? EyeOff : Eye;
 
   return (
-    <FieldFrame id={id} label={label} error={error} hint={hint} labelAction={labelAction}>
+    <FormField id={id} label={label} error={error} hint={hint} labelAction={labelAction}>
       <div className="relative flex">
         <Input
           {...inputProps}
           id={id}
           type={visible ? "text" : "password"}
           aria-invalid={error ? true : undefined}
-          aria-describedby={describedBy(id, hint, error)}
-          className={cn(controlClassName, "pr-14", className)}
+          aria-describedby={getDescribedBy(id, { hint, error })}
+          className={cn(FORM_CONTROL_CLASS_NAME, "pr-14", className)}
         />
         <button
           type="button"
@@ -111,7 +72,7 @@ export function AuthPasswordField({
           <Icon className="size-5" aria-hidden="true" />
         </button>
       </div>
-    </FieldFrame>
+    </FormField>
   );
 }
 

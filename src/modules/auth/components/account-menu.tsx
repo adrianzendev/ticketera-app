@@ -1,6 +1,6 @@
 "use client";
 
-import { CircleUserRound, LogOut, Ticket } from "lucide-react";
+import { CircleUserRound, LayoutDashboard, LogOut, Ticket } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -9,6 +9,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 import type { SessionUser } from "@/modules/auth/schemas/auth.schema";
+import { ORGANIZER_HOME_HREF } from "@/modules/organizer/components/organizer-shell";
 
 const itemClassName =
   "flex min-h-11 w-full items-center gap-3 rounded-lg px-3 text-left text-[15px] font-medium text-foreground outline-none hover:bg-muted focus-visible:ring-3 focus-visible:ring-ring/50";
@@ -55,6 +56,10 @@ export function AccountMenu({
         <Link href="/mis-entradas" onClick={() => setOpen(false)} className={itemClassName}>
           <Ticket className="size-[18px]" aria-hidden="true" />
           Mis entradas
+        </Link>
+        <Link href={ORGANIZER_HOME_HREF} onClick={() => setOpen(false)} className={itemClassName}>
+          <LayoutDashboard className="size-[18px]" aria-hidden="true" />
+          Panel de organizador
         </Link>
         <button type="button" onClick={handleLogout} className={itemClassName}>
           <LogOut className="size-[18px]" aria-hidden="true" />

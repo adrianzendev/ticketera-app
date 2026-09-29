@@ -16,6 +16,7 @@ import {
 import { AccountMenu } from "@/modules/auth/components/account-menu";
 import { useSession } from "@/modules/auth/hooks/use-session";
 import { useAuthStore } from "@/modules/auth/store/auth.store";
+import { ORGANIZER_HOME_HREF } from "@/modules/organizer/components/organizer-shell";
 
 const navLinks = [
   { label: "Eventos", href: "/eventos" },
@@ -77,7 +78,7 @@ export function SiteNavbar() {
                 variant="outline"
                 nativeButton={false}
                 className="border-[1.5px]"
-                render={<Link href="#" />}
+                render={<Link href={ORGANIZER_HOME_HREF} />}
               >
                 Vender entradas
               </Button>
@@ -164,7 +165,9 @@ export function SiteNavbar() {
                   variant="outline"
                   className="mt-2 justify-start"
                   nativeButton={false}
-                  render={<Link href="#" />}
+                  render={
+                    <Link href={ORGANIZER_HOME_HREF} onClick={() => setMenuOpen(false)} />
+                  }
                 >
                   Vender entradas
                 </Button>
