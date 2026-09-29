@@ -17,11 +17,11 @@ import {
 } from "@/modules/order/components/checkout-summary";
 import { PurchaseStepsHeader } from "@/modules/order/components/purchase-steps-header";
 import { useCheckoutForm } from "@/modules/order/hooks/use-checkout-form";
+import { useCountdown } from "@/modules/order/hooks/use-countdown";
 import {
   EMPTY_CHECKOUT_VALUES,
   type CheckoutFormValues,
 } from "@/modules/order/schemas/checkout.schema";
-import { useCountdown } from "@/modules/order/hooks/use-countdown";
 import type { OrderLine } from "@/modules/order/schemas/order.schema";
 import { getOrderLines, orderService } from "@/modules/order/services/order.service";
 import {

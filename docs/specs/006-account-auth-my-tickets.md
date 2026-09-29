@@ -426,3 +426,7 @@ Notas de ejecución:
 
 ## Preguntas abiertas
 ninguna
+
+## Notas de implementación
+- AC-9 reforzado (corrección de seguridad, sin cambio de alcance: la spec ya exigía "solo rutas internas; evita open redirect"): `getSafeRedirect` rechaza además valores con espacios o caracteres de control (p. ej. `/\t/evil.com`, que el parser de URL convierte en `https://evil.com/`) y exige que `new URL(value, base).origin` sea el mismo origen.
+- AC-11: cuando el store ya está rehidratado, `useSession` marca `hydrated` en una microtarea (regla de lint `react-hooks/set-state-in-effect`); mismo resultado para quien usa el hook.

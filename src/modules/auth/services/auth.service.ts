@@ -75,6 +75,18 @@ export const authService = createAuthService();
 
 export const DEFAULT_REDIRECT = "/mis-entradas";
 
+const REDIRECT_BASE = "http://local.test";
+// El parser de URL descarta tabs y saltos de línea: "/\t/evil.com" terminaría en "//evil.com".
+const UNSAFE_REDIRECT_CHARS = /[\u0000-\u001F\u007F\s]/;
+
+function isSameOrigin(value: string): boolean {
+  try {
+    return new URL(value, REDIRECT_BASE).origin === REDIRECT_BASE;
+  } catch {
+    return false;
+  }
+}
+
 export function getSafeRedirect(
   value: string | null | undefined,
   fallback: string = DEFAULT_REDIRECT,
@@ -85,7 +97,9 @@ export function getSafeRedirect(
     value.startsWith("//") ||
     value.startsWith("/\\") ||
     value.includes("\\") ||
-    value.startsWith("/ingresar")
+    UNSAFE_REDIRECT_CHARS.test(value) ||
+    value.startsWith("/ingresar") ||
+    !isSameOrigin(value)
   ) {
     return fallback;
   }

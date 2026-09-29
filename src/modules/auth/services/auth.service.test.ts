@@ -158,6 +158,11 @@ describe("getSafeRedirect", () => {
     null,
     undefined,
     "/ingresar?redirect=/x",
+    "/\t/malicioso.com",
+    "/\n/malicioso.com",
+    "/\r/malicioso.com",
+    "/ /malicioso.com",
+    "/eventos\u0000",
   ])("AC-9: %s → /mis-entradas", (value) => {
     expect(getSafeRedirect(value)).toBe("/mis-entradas");
   });
