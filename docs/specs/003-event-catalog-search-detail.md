@@ -5,6 +5,7 @@ Fase: 3 de 7 (catálogo; después vienen 4 entradas + mapa de asientos, 5 checko
 
 ## Aprobación
 Aprobado por el usuario el 2026-09-29 (confirmado en chat: "si").
+Cambio (sin shadcn, HTML nativo en AC-1, AC-16 y AC-21) decidido por el usuario en chat el 2026-09-29 ("no necesitamos ui shadcn").
 
 ## Contexto
 La landing (specs 001/002) muestra eventos pero no hay página para explorarlos ni para ver uno. Esta fase agrega la búsqueda con filtros combinables (`/eventos`) y el detalle de evento (`/eventos/[slug]`), responsive mobile + desktop, siguiendo los diseños `Search`, `SearchMobile`, `EventDetail` y `EventDetailMobile`. Es solo UI/UX con datos mock y services sincrónicos, sin backend. Deja listo el enlace a `/eventos/[slug]/entradas`, que se construye en la fase 4.
@@ -40,7 +41,7 @@ La landing (specs 001/002) muestra eventos pero no hay página para explorarlos 
 - `src/components/ui/{button,badge,card,input,separator,sheet}.tsx` — ya instalados. `Sheet` sirve para los filtros en mobile e `Input` para la búsqueda.
 - `src/lib/utils.ts` — `cn()`.
 - `lucide-react` — íconos (`Calendar`, `Clock`, `MapPin`, `Heart`, `Share2`, `SlidersHorizontal`, `X`, `Search`, `Music`, `User`, `QrCode`, `Lock`, `ArrowRight`).
-- shadcn a instalar (Ola 0): `npx shadcn add checkbox radio-group label breadcrumb`.
+- Sin componentes shadcn nuevos: por decisión del usuario (2026-09-29) checkbox, radio, label y breadcrumb se hacen con HTML nativo + Tailwind dentro de los componentes del módulo.
 - No se instala ninguna otra dependencia. Para el orden por fecha o precio se usan `Button` con `aria-pressed`; no se instala `toggle-group`.
 
 ## Contratos
@@ -121,7 +122,7 @@ export function EventCard(props: { event: Event; showDate?: boolean }): JSX.Elem
 ## Tareas
 | ID | Ola | Título | Archivos propios | Depende de | ACs |
 |----|-----|--------|------------------|------------|-----|
-| S0 | 0 | Setup: shadcn y enlaces de navegación | `src/components/ui/checkbox.tsx`, `src/components/ui/radio-group.tsx`, `src/components/ui/label.tsx`, `src/components/ui/breadcrumb.tsx`, `package.json` / `package-lock.json` (solo si el CLI los toca), `src/components/layout/site-navbar.tsx`, `src/app/page.tsx` | — | AC-1, AC-2 |
+| S0 | 0 | Setup: enlaces de navegación | `src/components/layout/site-navbar.tsx`, `src/app/page.tsx` | — | AC-1, AC-2 |
 | T1 | 1 | Contratos, mock de detalle y service | `src/modules/event/schemas/event.schema.ts`, `src/modules/event/schemas/event.schema.test.ts`, `src/modules/event/data/event-details.mock.ts`, `src/modules/event/services/event.service.ts`, `src/modules/event/services/event.service.test.ts` | S0 | AC-3, AC-4, AC-5, AC-6, AC-7 |
 | T2 | 1 | Store de búsqueda y funciones puras | `src/modules/event/store/event-search.store.ts`, `src/modules/event/store/event-search.store.test.ts` | S0 | AC-8, AC-9, AC-10, AC-11, AC-12 |
 | T3 | 2 | Página `/eventos` y `EventCard` enlazable | `src/app/eventos/page.tsx`, `src/modules/event/components/event-search-bar.tsx`, `src/modules/event/components/event-search-filters.tsx`, `src/modules/event/components/event-search-results.tsx`, `src/modules/event/components/event-card.tsx` | T1, T2 | AC-13 a AC-19 |
@@ -135,7 +136,7 @@ Notas de ejecución:
 ## Criterios de aceptación
 
 ### Setup (S0)
-- AC-1: existen `src/components/ui/{checkbox,radio-group,label,breadcrumb}.tsx`, generados por `npx shadcn add` y sin editar a mano.
+- AC-1: no se agregan componentes a `src/components/ui/`; los controles de filtro y el breadcrumb usan elementos HTML nativos (ver AC-16 y AC-21).
 - AC-2: en `site-navbar.tsx`, `navLinks` es `[{ "Eventos", "/eventos" }, { "Categorías", "/#categorias" }, { "Cómo funciona", "/#como-funciona" }]`, y lo usan tanto el menú de desktop como el `Sheet` mobile. En `src/app/page.tsx`, el link "Ver calendario completo" tiene `href="/eventos"`. No hay otros cambios en esos dos archivos.
 
 ### Contratos, mock y service (T1)
@@ -192,10 +193,10 @@ Notas de ejecución:
 - AC-14: `EventCard` renderiza un `Link` de `next/link` a `/eventos/${event.slug}` como elemento raíz, sin `<a>` ni botones anidados dentro. El contrato es `{ event: Event; showDate?: boolean }`. Con `showDate` muestra una línea con ícono de calendario y la fecha corta, por ejemplo "sáb 14 nov", formateada con `Intl.DateTimeFormat("es-PE", { weekday: "short", day: "numeric", month: "short", timeZone: "America/Lima" })`. Sin `showDate` se ve igual que hoy, así que la landing no cambia visualmente.
 - AC-15: `EventSearchBar` es un `form role="search"` con un `Input type="search"` y un `label` visible o `aria-label` "Qué quieres ver", enlazado a `setSearch` del store. El submit hace `preventDefault` y no navega. El filtrado se aplica mientras se escribe.
 - AC-16: `EventSearchFilters` renderiza un bloque "Filtros" con 4 `fieldset`/`legend`:
-  - "Categoría": `Checkbox` + `Label` por cada categoría de `categories.mock`, con el contador de `countBy(all, "categorySlug")`;
-  - "Ciudad": `Checkbox` + `Label` por cada ciudad distinta del catálogo, en orden alfabético, con el contador de `countBy(all, "city")`;
-  - "Fecha": `RadioGroup` con "Cualquier fecha" y un radio por cada mes de `getAvailableMonths(all)` con `formatMonthLabel`;
-  - "Precio desde": `RadioGroup` con los 5 `PRICE_RANGES`.
+  - "Categoría": `<input type="checkbox">` nativo (con `accent-primary`) dentro de su `<label>` por cada categoría de `categories.mock`, con el contador de `countBy(all, "categorySlug")`;
+  - "Ciudad": `<input type="checkbox">` nativo dentro de su `<label>` por cada ciudad distinta del catálogo, en orden alfabético, con el contador de `countBy(all, "city")`;
+  - "Fecha": grupo de `<input type="radio">` nativos con el mismo `name`, con "Cualquier fecha" y un radio por cada mes de `getAvailableMonths(all)` con `formatMonthLabel`;
+  - "Precio desde": grupo de `<input type="radio">` nativos con los 5 `PRICE_RANGES`.
   
   Tiene además un botón "Limpiar" (`clearFilters`), visible solo si hay chips activos. Todos los controles leen del store y escriben en él. Cada control tiene su label asociado y el área clicable mide 38px o más de alto.
 - AC-17: `EventSearchResults` renderiza:
@@ -215,7 +216,7 @@ Notas de ejecución:
   - exporta `generateStaticParams` a partir de `eventService.list()`;
   - exporta `generateMetadata`, que devuelve `title: "<event.title> | Ticketera"` y `description` = los primeros 160 caracteres de `description`;
   - llama a `notFound()` de `next/navigation` cuando `eventService.getBySlug` devuelve `null`.
-- AC-21: breadcrumb con los componentes shadcn `Breadcrumb*`: "Inicio" (`/`), luego el nombre de la categoría (`/eventos`) y después el título del evento como `BreadcrumbPage` (`aria-current="page"`).
+- AC-21: breadcrumb nativo `<nav aria-label="Ruta de navegación"><ol>` con separadores `ChevronRight` (`aria-hidden`): "Inicio" (`/`), luego el nombre de la categoría (`/eventos`) y después el título del evento como `<span aria-current="page">`.
 - AC-22: `EventDetailHero`:
   - grid de 2 columnas en `lg:` (texto e imagen con `next/image`) y apilado en mobile, con la imagen arriba;
   - badge con el nombre de la categoría y `h1` con el título;
@@ -258,7 +259,7 @@ Notas de ejecución:
 - El `EventSearchBar` del diseño de desktop tiene botones "Fecha" y "Precio" dentro de la barra. Se omiten porque duplican los filtros del sidebar (KISS); la barra queda solo con texto + "Buscar".
 - "Cómo llegar" enlaza a una búsqueda de Google Maps (URL pública, sin API key ni embebido). El mapa del lugar sigue siendo un placeholder.
 - Dependencias: T1 y T2 dependen de S0 solo por orden de olas; no comparten archivos. T4 consume `EventCard` de T3 en la misma ola sin editarlo (el contrato es compatible hacia atrás). No hay archivos compartidos entre tareas de la misma ola.
-- `node_modules` no está instalado en el workspace. S0 corre `npm install --legacy-peer-deps` antes de `npx shadcn add`.
+- Sin shadcn para checkbox/radio/label/breadcrumb: el entorno bloquea `ui.shadcn.com` y el usuario decidió (2026-09-29) no usarlos; se usan elementos HTML nativos. S0 queda solo con los enlaces de navegación.
 - Fases siguientes (cada una con su propia spec y aprobación): 4 entradas + mapa de asientos (SVG propio + `react-zoom-pan-pinch`), en `/eventos/[slug]/entradas`; 5 checkout y confirmación; 6 cuenta; 7 organizador.
 
 ## Preguntas abiertas
