@@ -7,31 +7,22 @@ import { cn } from "@/lib/utils";
 import type { EventDetail } from "@/modules/event/schemas/event.schema";
 import { OrderMobileBar, OrderSummary } from "@/modules/order/components/order-summary";
 import { TierQuantityList } from "@/modules/order/components/tier-quantity-list";
+import { getOrderLines } from "@/modules/order/services/order.service";
 import {
   MAX_TICKETS_PER_ZONE,
   getCartCount,
-  getCartLines,
   getCartTotal,
   useCartStore,
 } from "@/modules/order/store/cart.store";
 import { SeatPicker } from "@/modules/venue/components/seat-picker";
 import { VenueZoneMap } from "@/modules/venue/components/venue-zone-map";
 import type { VenueMap } from "@/modules/venue/schemas/venue.schema";
-import { findSeat, formatSeatLabel } from "@/modules/venue/services/venue.service";
 
 const CONTINUE_HREF = "/checkout";
 
 const cardClassName =
   "flex flex-col rounded-[22px] border border-zinc-200 bg-white lg:rounded-3xl";
 const headingClassName = "text-lg font-semibold lg:text-xl";
-
-function getSeatLabels(venueMap: VenueMap | null, seatIds: string[]): string[] {
-  if (!venueMap) return [];
-  return seatIds.flatMap((seatId) => {
-    const found = findSeat(venueMap, seatId);
-    return found ? [formatSeatLabel(found.row.label, found.seat.number)] : [];
-  });
-}
 
 export function TicketSelection({
   event,
@@ -83,10 +74,7 @@ export function TicketSelection({
   }
 
   const items = { standing, seated };
-  const lines = getCartLines(items, event.tiers).map((line) => ({
-    ...line,
-    seatLabels: getSeatLabels(venueMap, line.seatIds),
-  }));
+  const lines = getOrderLines(items, event.tiers, venueMap);
   const total = getCartTotal(items, event.tiers);
   const count = getCartCount(items);
   const seatLabelsByTier = Object.fromEntries(lines.map((line) => [line.tierId, line.seatLabels]));
