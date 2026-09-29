@@ -2,7 +2,9 @@ import Image from "next/image";
 
 import { formatEventDateLong } from "@/lib/date";
 import { QrPattern } from "@/modules/order/components/qr-pattern";
+import { TicketPerforation } from "@/modules/order/components/ticket-perforation";
 import type { Order } from "@/modules/order/schemas/order.schema";
+import { getTicketSeed } from "@/modules/order/services/ticket.service";
 
 export function OrderTicketCard({ order }: { order: Order }) {
   const { event } = order;
@@ -61,16 +63,10 @@ export function OrderTicketCard({ order }: { order: Order }) {
         )}
       </div>
 
-      <div
-        aria-hidden="true"
-        className="relative shrink-0 border-t-[1.5px] border-dashed border-zinc-300 lg:border-t-0 lg:border-l-[1.5px]"
-      >
-        <span className="absolute -top-3 -left-3 size-6 rounded-full border border-zinc-200 bg-zinc-100" />
-        <span className="absolute -top-3 -right-3 size-6 rounded-full border border-zinc-200 bg-zinc-100 lg:top-auto lg:right-auto lg:-bottom-3 lg:-left-3" />
-      </div>
+      <TicketPerforation />
 
       <div className="flex flex-col items-center justify-center gap-2.5 p-[22px] lg:w-[220px] lg:shrink-0 lg:p-0">
-        <QrPattern seed={Number(order.id.slice(3))} className="size-[168px] lg:size-[126px]" />
+        <QrPattern seed={getTicketSeed(order.id, 0)} className="size-[168px] lg:size-[126px]" />
         <span className="text-[13px] text-muted-foreground">Entrada 1 de {order.count}</span>
       </div>
     </article>
