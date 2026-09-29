@@ -1,10 +1,10 @@
 # 007 — Organizador: panel de eventos y crear evento (`/organizador`, `/organizador/eventos/nuevo`)
 
-Estado: pending-approval
+Estado: approved
 Fase: 7 de 7 (organizador; última fase planificada)
 
 ## Aprobación
-Pendiente.
+Aprobado por el usuario el 2026-09-29 (confirmado en chat: "si").
 
 ## Contexto
 El navbar tiene "Vender entradas" con `href="#"`. Esta fase agrega el área del organizador: un panel (`/organizador`) con KPIs de ventas y la lista de eventos del organizador con su estado, y un formulario para crear un evento (`/organizador/eventos/nuevo`) con datos básicos, fecha y lugar, imagen de portada, tipos de entrada dinámicos y vista previa en vivo. Al guardar (borrador o publicado) el evento se agrega a un store mock en `sessionStorage` y el panel lo muestra. Requiere sesión (mock de la fase 6). Sigue los diseños `OrgDashboard`, `OrgDashboardMobile`, `OrgCreate` y `OrgCreateMobile`, responsive en mobile y desktop. Es solo UI/UX con datos mock.
