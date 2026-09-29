@@ -1,10 +1,10 @@
 # 004 — Selección de entradas y mapa de asientos (`/eventos/[slug]/entradas`)
 
-Estado: pending-approval
+Estado: approved
 Fase: 4 de 7 (entradas + mapa de asientos; después vienen 5 checkout y confirmación, 6 cuenta, 7 organizador)
 
 ## Aprobación
-Pendiente.
+Aprobado por el usuario el 2026-09-29 (confirmado en chat: "si").
 
 ## Contexto
 El detalle de evento (spec 003) enlaza a `/eventos/[slug]/entradas`, que todavía no existe. Esta fase construye el paso 1 de la compra: el usuario elige zona en un mapa del recinto (SVG propio con zoom/pan/pinch), la cantidad por tier (zonas de pie) o los asientos numerados (zonas con asiento), y ve el resumen "Tu compra" con el total. Sigue los diseños `Tickets` y `TicketsMobile`, responsive mobile + desktop. Es solo UI/UX con datos mock y services sincrónicos, sin backend. El carrito se guarda en `sessionStorage` para que la fase 5 (checkout) lo lea.
