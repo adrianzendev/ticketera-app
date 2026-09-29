@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { flushSync } from "react-dom";
 
+import { useSession } from "@/modules/auth/hooks/use-session";
 import type { EventDetail } from "@/modules/event/schemas/event.schema";
 import { eventService } from "@/modules/event/services/event.service";
 import { CheckoutFields } from "@/modules/order/components/checkout-form";
@@ -16,6 +17,10 @@ import {
 } from "@/modules/order/components/checkout-summary";
 import { PurchaseStepsHeader } from "@/modules/order/components/purchase-steps-header";
 import { useCheckoutForm } from "@/modules/order/hooks/use-checkout-form";
+import {
+  EMPTY_CHECKOUT_VALUES,
+  type CheckoutFormValues,
+} from "@/modules/order/schemas/checkout.schema";
 import { useCountdown } from "@/modules/order/hooks/use-countdown";
 import type { OrderLine } from "@/modules/order/schemas/order.schema";
 import { getOrderLines, orderService } from "@/modules/order/services/order.service";
@@ -120,14 +125,16 @@ function ReservationNotice({ formatted, secondsLeft }: { formatted: string; seco
 function CheckoutContent({
   cart,
   status,
+  initialValues,
   onStatusChange,
 }: {
   cart: CheckoutCart;
   status: CheckoutStatus;
+  initialValues: CheckoutFormValues;
   onStatusChange: (status: CheckoutStatus) => void;
 }) {
   const router = useRouter();
-  const { values, errors, setField, blurField, validate } = useCheckoutForm();
+  const { values, errors, setField, blurField, validate } = useCheckoutForm(initialValues);
   const [paymentError, setPaymentError] = useState<string | null>(null);
   const { event, lines, total, count } = cart;
   const changeHref = ticketsHref(event.slug);
@@ -224,6 +231,7 @@ export function CheckoutView() {
   const eventSlug = useCartStore((s) => s.eventSlug);
   const standing = useCartStore((s) => s.standing);
   const seated = useCartStore((s) => s.seated);
+  const session = useSession();
 
   useEffect(() => {
     void Promise.resolve(useCartStore.persist.rehydrate()).then(() => setHydrated(true));
@@ -239,7 +247,8 @@ export function CheckoutView() {
     setStatus(next);
   }
 
-  if (!hydrated) {
+  // Se espera también a la sesión para que CheckoutContent se monte con el prellenado correcto.
+  if (!hydrated || session.status === "loading") {
     return (
       <>
         <PurchaseStepsHeader currentStep={2} backHref="/eventos" backLabel="Volver a eventos" />
@@ -289,7 +298,16 @@ export function CheckoutView() {
         backHref={ticketsHref(cart.event.slug)}
         backLabel="Volver a entradas"
       />
-      <CheckoutContent cart={cart} status={status} onStatusChange={changeStatus} />
+      <CheckoutContent
+        cart={cart}
+        status={status}
+        initialValues={
+          session.user
+            ? { ...EMPTY_CHECKOUT_VALUES, fullName: session.user.name, email: session.user.email }
+            : EMPTY_CHECKOUT_VALUES
+        }
+        onStatusChange={changeStatus}
+      />
     </>
   );
 }
