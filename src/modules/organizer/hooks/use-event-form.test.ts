@@ -138,6 +138,15 @@ describe("useEventForm", () => {
     });
   });
 
+  it("AC-22: validate con portada no permitida devuelve event-image sin lanzar", () => {
+    const { result } = renderForm({ ...VALID_VALUES, imageUrl: "data:image/png;base64," });
+    let outcome: ReturnType<typeof result.current.validate> | undefined;
+    act(() => {
+      outcome = result.current.validate();
+    });
+    expect(outcome).toEqual({ success: false, firstInvalidId: "event-image" });
+  });
+
   it("AC-22: validate válido devuelve los datos transformados", () => {
     const { result } = renderForm(VALID_VALUES);
     let outcome: ReturnType<typeof result.current.validate> | undefined;

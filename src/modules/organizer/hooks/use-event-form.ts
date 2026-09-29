@@ -113,9 +113,14 @@ export function useEventForm({
 
   const validate = (): EventFormValidateResult => {
     setSubmitAttempted(true);
-    const firstInvalidId = getFirstInvalidFieldId(values, allErrors);
-    if (firstInvalidId) return { success: false, firstInvalidId };
-    return { success: true, data: createEventFormSchema(nowValue).parse(values) };
+    const result = createEventFormSchema(nowValue).safeParse(values);
+    if (result.success) return { success: true, data: result.data };
+    // Sin error de campo ni de tier, el único origen posible es la portada (p. ej. un PNG
+    // de 0 bytes produce un data URL vacío que el schema rechaza).
+    return {
+      success: false,
+      firstInvalidId: getFirstInvalidFieldId(values, allErrors) ?? "event-image",
+    };
   };
 
   return {
