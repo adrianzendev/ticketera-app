@@ -1,10 +1,10 @@
 # 003 — Catálogo de eventos: búsqueda (`/eventos`) y detalle (`/eventos/[slug]`)
 
-Estado: pending-approval
+Estado: approved
 Fase: 3 de 7 (catálogo; después vienen 4 entradas + mapa de asientos, 5 checkout y confirmación, 6 cuenta, 7 organizador)
 
 ## Aprobación
-Pendiente.
+Aprobado por el usuario el 2026-09-29 (confirmado en chat: "si").
 
 ## Contexto
 La landing (specs 001/002) muestra eventos pero no hay página para explorarlos ni para ver uno. Esta fase agrega la búsqueda con filtros combinables (`/eventos`) y el detalle de evento (`/eventos/[slug]`), responsive mobile + desktop, siguiendo los diseños `Search`, `SearchMobile`, `EventDetail` y `EventDetailMobile`. Es solo UI/UX con datos mock y services sincrónicos, sin backend. Deja listo el enlace a `/eventos/[slug]/entradas`, que se construye en la fase 4.

@@ -13,9 +13,9 @@ import {
 } from "@/components/ui/sheet";
 
 const navLinks = [
-  { label: "Eventos", href: "#eventos" },
-  { label: "Categorías", href: "#categorias" },
-  { label: "Cómo funciona", href: "#como-funciona" },
+  { label: "Eventos", href: "/eventos" },
+  { label: "Categorías", href: "/#categorias" },
+  { label: "Cómo funciona", href: "/#como-funciona" },
 ];
 
 export function SiteNavbar() {

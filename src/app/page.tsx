@@ -36,7 +36,7 @@ export default function Home() {
                 </p>
               </div>
               <Link
-                href="#"
+                href="/eventos"
                 className="flex items-center gap-1.5 text-[15px] font-semibold text-primary hover:text-primary/80"
               >
                 Ver calendario completo
