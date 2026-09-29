@@ -1,6 +1,6 @@
 # 007 — Organizador: panel de eventos y crear evento (`/organizador`, `/organizador/eventos/nuevo`)
 
-Estado: approved
+Estado: done
 Fase: 7 de 7 (organizador; última fase planificada)
 
 ## Aprobación
@@ -459,3 +459,9 @@ Notas de ejecución:
 
 ## Preguntas abiertas
 ninguna
+
+## Notas de cierre
+- AC-28: los `th`/`td` usan `pl-6` en la primera columna, `pl-4` en las intermedias y `pl-4 pr-6` en la última (en lugar de `px-6` en todos los `th`), para que los encabezados queden alineados con sus celdas. Detalle visual, sin cambio funcional.
+- AC-34: el hint de la portada es `<span id="event-image-hint" class="block …">` en vez de `<p>`, porque está dentro del `<label>` (un `<p>` ahí es HTML inválido).
+- Exports auxiliares en archivos propios: `getEventAction` y `EventRevenue` (`event-status-badge.tsx`), `EventSoldLabel` (`event-sold-progress.tsx`), compartidos entre tabla y tarjetas.
+- Verificado en navegador (desktop y mobile): login demo → `/organizador` → crear evento con errores de validación → publicar → vuelve al panel con aviso, evento resaltado primero y KPI de publicados en 4; sin errores de runtime ni warnings de hidratación.

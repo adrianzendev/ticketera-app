@@ -141,9 +141,9 @@ export function CoverImageField({
             <span className="lg:hidden">Subir imagen</span>
             <span className="hidden lg:inline">Arrastra una imagen o haz clic para subirla</span>
           </span>
-          <p id={`${INPUT_ID}-hint`} className="text-xs text-zinc-600 lg:text-[13px]">
+          <span id={`${INPUT_ID}-hint`} className="block text-xs text-zinc-600 lg:text-[13px]">
             {HINT}
-          </p>
+          </span>
         </label>
       )}
       {error && (
