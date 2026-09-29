@@ -1,6 +1,6 @@
 # 006 — Cuenta: ingreso, registro y Mis entradas (`/ingresar`, `/mis-entradas`)
 
-Estado: approved
+Estado: done
 Fase: 6 de 7 (cuenta y Mis entradas; después viene 7 organizador)
 
 ## Aprobación
@@ -430,3 +430,5 @@ ninguna
 ## Notas de implementación
 - AC-9 reforzado (corrección de seguridad, sin cambio de alcance: la spec ya exigía "solo rutas internas; evita open redirect"): `getSafeRedirect` rechaza además valores con espacios o caracteres de control (p. ej. `/\t/evil.com`, que el parser de URL convierte en `https://evil.com/`) y exige que `new URL(value, base).origin` sea el mismo origen.
 - AC-11: cuando el store ya está rehidratado, `useSession` marca `hydrated` en una microtarea (regla de lint `react-hooks/set-state-in-effect`); mismo resultado para quien usa el hook.
+- `auth-form-field.tsx` exporta además `AuthForm` (envío común de AC-28) y `AuthSwitchButton`, para no duplicar entre login y registro.
+- Verificado en navegador (desktop y mobile): `/mis-entradas` sin sesión → `/ingresar?redirect=…` → cuenta demo → vuelve a `/mis-entradas`; navbar con sesión en la landing; sin errores de runtime ni warnings de hidratación.
