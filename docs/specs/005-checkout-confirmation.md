@@ -1,6 +1,6 @@
 # 005 — Checkout y confirmación (`/checkout`, `/checkout/confirmacion/[orderId]`)
 
-Estado: approved
+Estado: done
 Fase: 5 de 7 (checkout y confirmación; después vienen 6 cuenta y 7 organizador)
 
 ## Aprobación
@@ -486,3 +486,7 @@ Notas de ejecución:
 
 ## Preguntas abiertas
 ninguna
+
+## Notas de cierre
+- `CheckoutSummary` y `CheckoutPayBar` reciben además la prop opcional `paymentError?: string | null`, para mostrar el `role="alert"` de AC-22 justo arriba del botón de pagar (aditiva, no cambia alcance).
+- Flujo verificado en navegador (desktop y mobile): entradas → checkout con tarjeta → confirmación `TK-XXXXX`, sin errores de runtime.
