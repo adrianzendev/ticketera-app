@@ -432,3 +432,4 @@ ninguna
 - AC-11: cuando el store ya está rehidratado, `useSession` marca `hydrated` en una microtarea (regla de lint `react-hooks/set-state-in-effect`); mismo resultado para quien usa el hook.
 - `auth-form-field.tsx` exporta además `AuthForm` (envío común de AC-28) y `AuthSwitchButton`, para no duplicar entre login y registro.
 - Verificado en navegador (desktop y mobile): `/mis-entradas` sin sesión → `/ingresar?redirect=…` → cuenta demo → vuelve a `/mis-entradas`; navbar con sesión en la landing; sin errores de runtime ni warnings de hidratación.
+- Corrección posterior (2026-09-29): `useSession` pasa a leer el estado de hidratación con `useSyncExternalStore` (snapshot de servidor `false`), así todas las instancias cambian a la vez; eliminó un test intermitente de AC-11 ("dos hooks montados a la vez").
