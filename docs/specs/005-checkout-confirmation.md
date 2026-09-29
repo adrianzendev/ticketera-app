@@ -1,10 +1,10 @@
 # 005 — Checkout y confirmación (`/checkout`, `/checkout/confirmacion/[orderId]`)
 
-Estado: pending-approval
+Estado: approved
 Fase: 5 de 7 (checkout y confirmación; después vienen 6 cuenta y 7 organizador)
 
 ## Aprobación
-Pendiente.
+Aprobado por el usuario el 2026-09-29 (confirmado en chat: "si").
 
 ## Contexto
 El paso 1 de la compra (spec 004) deja el carrito en `sessionStorage` y su CTA "Continuar" enlaza a `/checkout`, que todavía no existe. Esta fase construye los pasos 2 y 3. El paso 2 son los datos del comprador y el pago, con reserva de 10 minutos, validación en cliente y un resumen del pedido. El paso 3 es la confirmación: una entrada estilo ticket con QR decorativo, las acciones y la sección "Qué sigue". Sigue los diseños `Checkout`, `CheckoutMobile`, `Confirmation` y `ConfirmationMobile`, responsive en mobile y desktop. Es solo UI/UX con datos mock: el pago es simulado y el pedido se guarda en `sessionStorage`.
