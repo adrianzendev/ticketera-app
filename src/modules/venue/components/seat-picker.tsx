@@ -15,7 +15,7 @@ type SeatVisualState = "available" | "selected" | "reserved" | "sold";
 const SEAT_STATUS_STYLES: Record<SeatVisualState, { label: string; fill: string | null }> = {
   available: { label: "Disponible", fill: null },
   selected: { label: "Seleccionado", fill: "#18181B" },
-  reserved: { label: "Reservado", fill: "#FCD34D" },
+  reserved: { label: "Reservado", fill: "#A1A1AA" },
   sold: { label: "Vendido", fill: "#D4D4D8" },
 };
 

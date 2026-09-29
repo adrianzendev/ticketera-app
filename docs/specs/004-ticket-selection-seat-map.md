@@ -271,7 +271,7 @@ Notas de ejecución:
 - AC-17: estados de cada asiento (colores en una constante única `SEAT_STATUS_STYLES` que usan tanto los círculos como la leyenda):
   - disponible: `fill={tier.color}`;
   - seleccionado (`seat.id` en `selectedSeatIds`): `fill="#18181B"`;
-  - reservado: `fill="#FCD34D"`;
+  - reservado: `fill="#A1A1AA"` (gris; antes `#FCD34D`, cambiado a pedido del usuario el 2026-09-29 porque se confundía con los disponibles);
   - vendido: `fill="#D4D4D8"`.
   
   Los asientos disponibles o seleccionados son `role="button"`, `tabIndex={0}`, `aria-pressed` y `aria-label="<formatSeatLabel(row.label, seat.number)>"`, y click, `Enter` o `Espacio` llaman a `onToggleSeat(seat.id)`. Los reservados y vendidos tienen `aria-disabled="true"`, `tabIndex={-1}`, `aria-label` con el sufijo `", no disponible"` y no llaman a `onToggleSeat`. Con `selectedSeatIds.length >= max`, los asientos disponibles no seleccionados también quedan `aria-disabled="true"` y no llaman a `onToggleSeat`, y se muestra `"Llegaste al máximo de <max> asientos por zona."`. Sin selección de asientos arrastrando.
@@ -349,3 +349,4 @@ ninguna
 - Fe de erratas: la prop de react-zoom-pan-pinch 4.2.0 es `onTransform`, no `onTransformed`.
 - `ZoomableCanvas` deshabilita también el zoom con doble toque (evita zoom al seleccionar asientos).
 - Ajuste visual tras prueba en navegador: en mobile los labels del mapa usan un tamaño mayor en unidades del viewBox y los controles de zoom van debajo del mapa en vez de flotar encima.
+- Cambio aprobado por el usuario (2026-09-29): el color de "Reservado" pasa de amarillo `#FCD34D` a gris `#A1A1AA` (AC-17).
