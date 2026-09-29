@@ -1,10 +1,10 @@
 # 006 — Cuenta: ingreso, registro y Mis entradas (`/ingresar`, `/mis-entradas`)
 
-Estado: pending-approval
+Estado: approved
 Fase: 6 de 7 (cuenta y Mis entradas; después viene 7 organizador)
 
 ## Aprobación
-Pendiente.
+Aprobado por el usuario el 2026-09-29 (confirmado en chat: "si").
 
 ## Contexto
 La confirmación de compra (spec 005) enlaza a `/mis-entradas`, que todavía no existe, y el navbar tiene "Iniciar sesión" con `href="#"`. Esta fase agrega una cuenta simulada: la ruta `/ingresar` con las pestañas Iniciar sesión / Crear cuenta, una sesión mock persistida en el navegador y la ruta `/mis-entradas` con los pedidos del usuario (próximos y pasados) y el detalle de cada entrada con su QR decorativo. El navbar refleja la sesión y el checkout prellena nombre y correo si hay sesión. Sigue los diseños `Auth`, `AuthMobile`, `MyTickets` y `MyTicketsMobile`, responsive en mobile y desktop. Es solo UI/UX con datos mock.
