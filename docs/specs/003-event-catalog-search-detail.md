@@ -1,6 +1,6 @@
 # 003 — Catálogo de eventos: búsqueda (`/eventos`) y detalle (`/eventos/[slug]`)
 
-Estado: approved
+Estado: done
 Fase: 3 de 7 (catálogo; después vienen 4 entradas + mapa de asientos, 5 checkout y confirmación, 6 cuenta, 7 organizador)
 
 ## Aprobación

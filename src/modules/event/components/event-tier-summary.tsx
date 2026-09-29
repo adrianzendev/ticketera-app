@@ -44,6 +44,7 @@ export function EventTierSummary({ event, className }: { event: EventDetail; cla
     >
       <p className="flex flex-col gap-0.5">
         <span className="text-[13px] text-muted-foreground">Entradas desde</span>
+        {" "}
         <span className="text-[30px] font-bold tracking-tight text-orange-700">
           S/ {event.priceFrom}
         </span>
@@ -105,6 +106,7 @@ export function EventMobileBuyBar({ event }: { event: Event }) {
     <div className="fixed inset-x-0 bottom-0 z-40 flex items-center justify-between gap-3 border-t border-border bg-white px-4 pt-3 pb-5 shadow-[0_-12px_24px_-18px_rgba(24,24,27,0.35)] lg:hidden">
       <p className="flex flex-col">
         <span className="text-xs text-muted-foreground">Desde</span>
+        {" "}
         <span className="text-[22px] font-bold tracking-tight text-orange-700">
           S/ {event.priceFrom}
         </span>
