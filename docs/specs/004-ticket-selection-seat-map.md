@@ -1,6 +1,6 @@
 # 004 — Selección de entradas y mapa de asientos (`/eventos/[slug]/entradas`)
 
-Estado: approved
+Estado: done
 Fase: 4 de 7 (entradas + mapa de asientos; después vienen 5 checkout y confirmación, 6 cuenta, 7 organizador)
 
 ## Aprobación
@@ -214,7 +214,7 @@ Notas de ejecución:
 - T4 importa `VenueZoneMap` y `SeatPicker` según las firmas de Contratos y **no edita** archivos de T3. Si T3 no terminó, T4 igual puede escribir su código contra el contrato; `npm run build` se corre al final de la ola.
 - T3 y T4 no editan `venue.schema.ts`, `venue.service.ts` ni `cart.store.ts`. Si falta algo en esos contratos, reportan `BLOCKED`.
 - T0: `npm install react-zoom-pan-pinch@4.2.0 --legacy-peer-deps`. Si `node_modules` no está instalado, correr antes `npm install --legacy-peer-deps`.
-- T3: antes de escribir, lee los tipos de `node_modules/react-zoom-pan-pinch` (4.2.0) para `TransformWrapper`, `TransformComponent`, `useControls` y las opciones `panning`, `wheel`, `pinch` y `onTransformed`.
+- T3: antes de escribir, lee los tipos de `node_modules/react-zoom-pan-pinch` (4.2.0) para `TransformWrapper`, `TransformComponent`, `useControls` y las opciones `panning`, `wheel`, `pinch` y `onTransform` (así se llama en la 4.2.0).
 - T4: antes de escribir la página, lee la guía de Next 16 en `node_modules/next/dist/docs/` sobre páginas dinámicas, `params` como `Promise`, `generateStaticParams`, `generateMetadata` y `notFound()`.
 
 ## Criterios de aceptación
@@ -257,7 +257,7 @@ Notas de ejecución:
 - AC-12: `cart.store.test.ts` cubre AC-8 a AC-11 con al menos estos casos: estado inicial; persistencia en `sessionStorage`; `setEvent` con slug nuevo resetea y con el mismo conserva; `increment` hasta el límite; `decrement` hasta borrar la clave y sin clave; `toggleSeat` agrega, quita y respeta el límite; límites independientes entre dos tiers; `clear`; `getCartLines` (orden, tier desconocido ignorado, seated); `getCartTotal` y `getCartCount` con standing + seated mezclados; `formatTicketCount`. Resetea el store y `sessionStorage` entre tests (`useCartStore.setState(...)` y `sessionStorage.clear()`).
 
 ### Componentes de mapa (T3)
-- AC-13: `ZoomableCanvas` es `"use client"` y envuelve `children` en `TransformWrapper` + `TransformComponent` de `react-zoom-pan-pinch`, con `minScale={1}`, `maxScale` (4 por defecto), `wheel={{ disabled: true }}`, pinch habilitado y `panning.disabled` en `true` mientras la escala sea 1 (se sigue con `onTransformed`), para que en mobile el arrastre con un dedo haga scroll de la página si no hay zoom. Es un contenedor `role="region"` con `aria-label={label}`. Tiene un grupo de 3 `Button` (variante `outline`, 40px o más) con `aria-label` "Acercar", "Alejar" y "Restablecer zoom", íconos `Plus`, `Minus` y `RotateCcw`, que llaman a `zoomIn`, `zoomOut` y `resetTransform` (con `useControls` o las funciones del render prop). "Alejar" y "Restablecer zoom" están `disabled` con escala 1, y "Acercar" con escala máxima.
+- AC-13: `ZoomableCanvas` es `"use client"` y envuelve `children` en `TransformWrapper` + `TransformComponent` de `react-zoom-pan-pinch`, con `minScale={1}`, `maxScale` (4 por defecto), `wheel={{ disabled: true }}`, pinch habilitado y `panning.disabled` en `true` mientras la escala sea 1 (se sigue con `onTransform` (así se llama en la 4.2.0)), para que en mobile el arrastre con un dedo haga scroll de la página si no hay zoom. Es un contenedor `role="region"` con `aria-label={label}`. Tiene un grupo de 3 `Button` (variante `outline`, 40px o más) con `aria-label` "Acercar", "Alejar" y "Restablecer zoom", íconos `Plus`, `Minus` y `RotateCcw`, que llaman a `zoomIn`, `zoomOut` y `resetTransform` (con `useControls` o las funciones del render prop). "Alejar" y "Restablecer zoom" están `disabled` con escala 1, y "Acercar" con escala máxima.
 - AC-14: `VenueZoneMap` es `"use client"` y renderiza, dentro de `ZoomableCanvas` con `label="Mapa de <map.name>"`, un `<svg viewBox="0 0 <width> <height>">` con `className="h-auto w-full"`:
   - el escenario como `<path d={stage.shape}>` oscuro (`#18181B`) con su `<text>` en blanco, `aria-hidden`;
   - una `<g>` por zona con un `<path d={zone.shape}>` y un `<text>` en `labelPosition` con el nombre de la zona y, debajo, `"S/ <price>"` o `"Agotado"`. El `<text>` es `aria-hidden` y `pointer-events-none`.
@@ -344,3 +344,8 @@ Notas de ejecución:
 
 ## Preguntas abiertas
 ninguna
+
+## Notas de cierre
+- Fe de erratas: la prop de react-zoom-pan-pinch 4.2.0 es `onTransform`, no `onTransformed`.
+- `ZoomableCanvas` deshabilita también el zoom con doble toque (evita zoom al seleccionar asientos).
+- Ajuste visual tras prueba en navegador: en mobile los labels del mapa usan un tamaño mayor en unidades del viewBox y los controles de zoom van debajo del mapa en vez de flotar encima.

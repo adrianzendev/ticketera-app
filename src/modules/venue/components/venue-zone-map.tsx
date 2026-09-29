@@ -37,10 +37,10 @@ export function VenueZoneMap({ map, tiers, selectedZoneId, onSelectZone, classNa
             textAnchor="middle"
             dominantBaseline="central"
             fill="#FFFFFF"
-            fontSize={16}
             fontWeight={700}
             letterSpacing="0.16em"
-            className="pointer-events-none select-none"
+            // En mobile el SVG se reduce ~3x: se agranda el texto en unidades del viewBox para que siga legible.
+            className="pointer-events-none select-none text-[24px] lg:text-[16px]"
           >
             {map.stage.label}
           </text>
@@ -111,10 +111,10 @@ function ZoneShape({ zone, tier, selected, onSelect }: ZoneShapeProps) {
         aria-hidden="true"
         className="pointer-events-none select-none"
       >
-        <tspan x={zone.labelPosition.x} dy="-0.2em" fontSize={18} fontWeight={600}>
+        <tspan x={zone.labelPosition.x} dy="-0.2em" fontWeight={600} className="text-[24px] lg:text-[18px]">
           {zone.name}
         </tspan>
-        <tspan x={zone.labelPosition.x} dy="1.3em" fontSize={15}>
+        <tspan x={zone.labelPosition.x} dy="1.3em" className="text-[20px] lg:text-[15px]">
           {priceText}
         </tspan>
       </text>

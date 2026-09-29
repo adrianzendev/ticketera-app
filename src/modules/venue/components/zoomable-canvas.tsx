@@ -47,7 +47,8 @@ export function ZoomableCanvas({ label, children, maxScale = 4, className }: Zoo
             <TransformComponent wrapperStyle={FULL_WIDTH} contentStyle={FULL_WIDTH}>
               {children}
             </TransformComponent>
-            <div className="absolute top-3 right-3 flex flex-col gap-2">
+            {/* En mobile los controles van debajo del mapa para no tapar zonas; en desktop, flotantes. */}
+            <div className="flex justify-end gap-2 p-2 lg:absolute lg:top-3 lg:right-3 lg:flex-col lg:p-0">
               <Button
                 type="button"
                 variant="outline"
