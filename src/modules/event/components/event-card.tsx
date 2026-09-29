@@ -1,24 +1,46 @@
 import Image from "next/image";
-import { MapPin } from "lucide-react";
+import Link from "next/link";
+import { Calendar, MapPin } from "lucide-react";
 
 import { categories } from "@/modules/event/data/categories.mock";
 import type { Event } from "@/modules/event/schemas/event.schema";
 
+// Zona fija para que SSR y cliente formateen igual, sin depender del runtime.
+const TIME_ZONE = "America/Lima";
+
+const dayFormat = new Intl.DateTimeFormat("es-PE", { day: "2-digit", timeZone: TIME_ZONE });
+const monthFormat = new Intl.DateTimeFormat("es-PE", { month: "short", timeZone: TIME_ZONE });
+const shortDateFormat = new Intl.DateTimeFormat("es-PE", {
+  weekday: "short",
+  day: "numeric",
+  month: "short",
+  timeZone: TIME_ZONE,
+});
+
 function eventDateParts(iso: string) {
   const date = new Date(iso);
   return {
-    day: new Intl.DateTimeFormat("es-PE", { day: "2-digit" }).format(date),
-    month: new Intl.DateTimeFormat("es-PE", { month: "short" }).format(date).toUpperCase(),
+    day: dayFormat.format(date),
+    month: monthFormat.format(date).toUpperCase(),
+    short: shortDateFormat.format(date).replace(/[.,]/g, ""),
   };
 }
 
-export function EventCard({ event }: { event: Event }) {
+type EventCardProps = {
+  event: Event;
+  showDate?: boolean;
+};
+
+export function EventCard({ event, showDate = false }: EventCardProps) {
   const category = categories.find((c) => c.slug === event.categorySlug);
-  const { day, month } = eventDateParts(event.startDate);
+  const { day, month, short } = eventDateParts(event.startDate);
 
   return (
-    <div className="relative flex flex-col overflow-hidden rounded-[22px] border border-border bg-white">
-      <div className="relative h-[184px] bg-border">
+    <Link
+      href={`/eventos/${event.slug}`}
+      className="relative flex flex-col overflow-hidden rounded-[22px] border border-border bg-white transition-[transform,box-shadow] duration-200 outline-none hover:-translate-y-1 hover:shadow-[0_20px_40px_-20px_rgba(24,24,27,0.35)] focus-visible:ring-3 focus-visible:ring-ring/50 motion-reduce:transition-none motion-reduce:hover:translate-y-0"
+    >
+      <span className="relative block h-[184px] bg-border">
         <Image
           src={event.imageUrl}
           alt={event.title}
@@ -42,9 +64,9 @@ export function EventCard({ event }: { event: Event }) {
             Agotado
           </span>
         )}
-      </div>
+      </span>
 
-      <div className="flex grow flex-col gap-2 px-5 pt-[18px]">
+      <span className="flex grow flex-col gap-2 px-5 pt-[18px]">
         {category && (
           <span className="text-xs font-semibold tracking-wide text-indigo-600 uppercase">
             {category.name}
@@ -54,21 +76,27 @@ export function EventCard({ event }: { event: Event }) {
           {event.title}
         </span>
         <span className="flex items-center gap-2 text-sm text-muted-foreground">
-          <MapPin className="size-4 shrink-0" />
+          <MapPin className="size-4 shrink-0" aria-hidden />
           {event.venueName} · {event.city}
         </span>
-      </div>
+        {showDate && (
+          <span className="flex items-center gap-2 text-sm text-muted-foreground">
+            <Calendar className="size-4 shrink-0" aria-hidden />
+            {short}
+          </span>
+        )}
+      </span>
 
-      <div className="relative mt-[18px] h-0 border-t-[1.5px] border-dashed border-zinc-300">
+      <span className="relative mt-[18px] block h-0 border-t-[1.5px] border-dashed border-zinc-300">
         <span className="absolute -top-2.5 -left-2.5 size-5 rounded-full border border-border bg-muted" />
         <span className="absolute -top-2.5 -right-2.5 size-5 rounded-full border border-border bg-muted" />
-      </div>
+      </span>
 
-      <div className="flex items-center justify-between gap-3 px-5 pt-4 pb-5">
-        <div className="flex flex-col">
+      <span className="flex items-center justify-between gap-3 px-5 pt-4 pb-5">
+        <span className="flex flex-col">
           <span className="text-xs text-muted-foreground">Desde</span>
           <span className="text-[19px] font-bold text-orange-700">S/ {event.priceFrom}</span>
-        </div>
+        </span>
         {event.status === "sold_out" ? (
           <span className="flex h-11 items-center rounded-xl bg-muted px-4 text-sm font-semibold text-muted-foreground">
             Agotado
@@ -78,7 +106,7 @@ export function EventCard({ event }: { event: Event }) {
             Ver entradas
           </span>
         )}
-      </div>
-    </div>
+      </span>
+    </Link>
   );
 }
