@@ -24,3 +24,23 @@ export const eventSchema = z.object({
   status: z.enum(["available", "last_tickets", "sold_out"]),
 });
 export type Event = z.infer<typeof eventSchema>;
+
+export const ticketTierStatusSchema = z.enum(["available", "last_tickets", "sold_out"]);
+
+export const ticketTierSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  price: z.number().nonnegative(),
+  color: z.string().regex(/^#[0-9A-Fa-f]{6}$/),
+  status: ticketTierStatusSchema,
+});
+export type TicketTier = z.infer<typeof ticketTierSchema>;
+
+export const eventDetailSchema = eventSchema.extend({
+  description: z.string().min(1),
+  doorsOpenAt: z.string().datetime({ offset: true }),
+  minAge: z.number().int().nonnegative().nullable(),
+  venueAddress: z.string().min(1),
+  tiers: z.array(ticketTierSchema).min(1),
+});
+export type EventDetail = z.infer<typeof eventDetailSchema>;
